@@ -6,87 +6,112 @@ driver = webdriver.Chrome(executable_path='./chromedriver_win32/chromedriver')
 
 driver.implicitly_wait(10)  # 10 seconds
 
-googleFormsURL = 'https://docs.google.com/forms/d/e/1FAIpQLScPXUcpuiFE00JLPYsABzE9tN005FSQAdQJ8A0af_POVZbi1w/viewform'
-
-roomNum = data.reply.roomNum
-name = data.reply.name
-question1 = data.reply.question1
-question2 = data.reply.question2
-question3 = data.reply.question3
-txtHint = data.reply.txtHint
+url_forms = data.reply.url
 autoSubmit = data.reply.autoSubmit
+autoClickBTN = data.reply.autoClickBTN
+
+
+googleFormsURL = url_forms
+
+
 
 driver.get(googleFormsURL)
 
 time.sleep(0.7)
 
-questionRoomNum_text = driver.find_element_by_xpath(
-    '//*[@id="mG61Hd"]/div[2]/div/div[2]/div[1]/div/div/div[2]/div/div[1]/div/div[1]/div')
 
-if (txtHint == questionRoomNum_text.text):
-    print(questionRoomNum_text.text)
+class AutoInput():
+    def __init__(self, txt_Xpath, txt_target, input_Xpath, input_txt, autoSubmit):
+        self.real_txt = driver.find_element_by_xpath(txt_Xpath).text  # 찾은 텍스트
+        self._txt_target = txt_target  # 찾을 텍스트
 
-    questionRoomNum_input = driver.find_element_by_xpath(
-        '//*[@id="mG61Hd"]/div[2]/div/div[2]/div[1]/div/div/div[2]/div/div[1]/div/div[1]/input')
+        self.input_element = driver.find_element_by_xpath(input_Xpath)  # 자동으로 입력할 위치
+        self._input_txt = input_txt  # 입력할 텍스트
 
-    questionRoomNum_input.send_keys(roomNum)
-else:
-    print("해당 답변을 찾지 못했습니다:", txtHint)
-    autoSubmit = False
+        self._autoSubmit = autoSubmit
 
-questionName_text = driver.find_element_by_xpath(
-    '//*[@id="mG61Hd"]/div[2]/div/div[2]/div[2]/div/div/div[2]/div/div[1]/div/div[1]/div')
+    def inputTEXT(self):
 
-if (txtHint == questionName_text.text):
-    print(questionName_text.text)
+        if (self.real_txt == self._txt_target):
+            print(self.real_txt)
+            (self.input_element).send_keys(self._input_txt)
+        else:
+            print(self._txt_target + "를 찾지 못했습니다. (찾은 값: " + self.real_txt + ")")
+            self._autoSubmit = False
 
-    questionName_input = driver.find_element_by_xpath(
-        '//*[@id="mG61Hd"]/div[2]/div/div[2]/div[2]/div/div/div[2]/div/div[1]/div/div[1]/input')
-    questionName_input.send_keys(name)
-else:
-    print("해당 답변을 찾지 못했습니다:", txtHint)
-    autoSubmit = False
+        return self._autoSubmit
 
-question1_toggle1_text = driver.find_element_by_xpath(
-    '//*[@id="mG61Hd"]/div[2]/div/div[2]/div[3]/div/div/div[2]/div/div/span/div/div[1]/label/div/div[2]/div/span')
+    def clickRadioBTN(self):
 
-if (question1 == question1_toggle1_text.text):
-    print(question1_toggle1_text.text)
+        if (self.real_txt == self._txt_target):
+            print(self.real_txt)
+            (self.input_element).click()
 
-    question1_toggle1 = driver.find_element_by_xpath('//*[@id="i13"]/div[3]/div')
-    question1_toggle1.click()
-else:
-    print("해당 답변을 찾지 못했습니다:", question1)
-    autoSubmit = False
+        else:
+            print(self._txt_target + "를 찾지 못했습니다. (찾은 값: " + self.real_txt + ")")
+            self._autoSubmit = False
 
-question2_toggle1_text = driver.find_element_by_xpath(
-    '//*[@id="mG61Hd"]/div[2]/div/div[2]/div[4]/div/div/div[2]/div/div/span/div/div[1]/label/div/div[2]/div/span')
+        return self._autoSubmit
 
-if (question2 == question2_toggle1_text.text):
-    print(question2_toggle1_text.text)
 
-    question2_toggle1 = driver.find_element_by_xpath('//*[@id="i23"]/div[3]/div')
-    question2_toggle1.click()
-else:
-    print("해당 답변을 찾지 못했습니다:", question2)
-    autoSubmit = False
+roomNum = AutoInput(
+    '//*[@id="mG61Hd"]/div[2]/div/div[2]/div[1]/div/div/div[2]/div/div[1]/div/div[1]/div',
+    data.reply.txtHint,
+    '//*[@id="mG61Hd"]/div[2]/div/div[2]/div[1]/div/div/div[2]/div/div[1]/div/div[1]/input',
+    data.reply.name,
+    autoSubmit
+)
 
-question3_toggle1_text = driver.find_element_by_xpath(
-    '//*[@id="mG61Hd"]/div[2]/div/div[2]/div[5]/div/div/div[2]/div[1]/div/label/div/div[2]/div/span')
+roomNum.inputTEXT()
 
-if (question3 == question3_toggle1_text.text):
-    print(question3_toggle1_text.text)
+name = AutoInput(
+    '//*[@id="mG61Hd"]/div[2]/div/div[2]/div[2]/div/div/div[2]/div/div[1]/div/div[1]/div',
+    data.reply.txtHint,
+    '//*[@id="mG61Hd"]/div[2]/div/div[2]/div[2]/div/div/div[2]/div/div[1]/div/div[1]/input',
+    data.reply.roomNum,
+    autoSubmit
+)
 
-    question3_checkbox = driver.find_element_by_xpath('//*[@id="i34"]/div[2]')
-    question3_checkbox.click()
-else:
-    print("해당 답변을 찾지 못했습니다:", question3)
-    autoSubmit = False
+name.inputTEXT()
+
+if (autoClickBTN):
+    question1 = AutoInput(
+        '//*[@id="mG61Hd"]/div[2]/div/div[2]/div[3]/div/div/div[2]/div/div/span/div/div[1]/label/div/div[2]/div/span',
+        data.reply.question1,
+        '//*[@id="i13"]/div[3]/div',
+        '',
+        autoSubmit
+    )
+
+    question1.clickRadioBTN()
+
+    question2 = AutoInput(
+        '//*[@id="mG61Hd"]/div[2]/div/div[2]/div[4]/div/div/div[2]/div/div/span/div/div[1]/label/div/div[2]/div/span',
+        data.reply.question2,
+        '//*[@id="i23"]/div[3]/div',
+        '',
+        autoSubmit
+    )
+
+    question2.clickRadioBTN()
+
+    question3 = AutoInput(
+        '//*[@id="mG61Hd"]/div[2]/div/div[2]/div[5]/div/div/div[2]/div[1]/div/label/div/div[2]/div/span',
+        data.reply.question3,
+        '//*[@id="i34"]/div[2]',
+        '',
+        autoSubmit
+    )
+
+    question3.clickRadioBTN()
 
 if (autoSubmit):
-    print("버튼을 클릭합니다.")
+    print("3초 후 자동으로 제출됩니다.")
+    time.sleep(3)
     subbitButton = driver.find_element_by_xpath('//*[@id="mG61Hd"]/div[2]/div/div[3]/div[1]/div/div/span')
     subbitButton.click()
+    print("제출이 완료되었습니다.")
+
 
 else:
     print("입력된 내용을 확인 후 직접 제출하세요.")
