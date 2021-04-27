@@ -1,0 +1,2 @@
+Chrome:	90.0.4430.93
+ChromeDriver: 90.0.4430.24
