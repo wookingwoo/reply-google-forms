@@ -2,26 +2,16 @@ from selenium import webdriver
 import time
 import data.reply
 
-driver = webdriver.Chrome(executable_path='./chromedriver_win32/chromedriver')
+isReplied = True
 
-driver.implicitly_wait(10)  # 10 seconds
-
-url_forms = data.reply.url
-autoSubmit = data.reply.autoSubmit
-autoClickBTN = data.reply.autoClickBTN
-
-
-googleFormsURL = url_forms
+if not isReplied:
+    driver = webdriver.Chrome(executable_path='./chromedriver_win32/chromedriver')
 
 
 
-driver.get(googleFormsURL)
-
-time.sleep(0.7)
-
-def AutoClose():
-    print("3초 후 자동으로 종료됩니다.")
-    time.sleep(3)
+def AutoClose(t):
+    print(str(t)+"초 후 자동으로 종료됩니다.")
+    time.sleep(t)
     driver.close()
 
 
@@ -59,68 +49,92 @@ class AutoInput():
         return self._autoSubmit
 
 
-roomNum = AutoInput(
-    '//*[@id="mG61Hd"]/div[2]/div/div[2]/div[1]/div/div/div[2]/div/div[1]/div/div[1]/div',
-    data.reply.txtHint,
-    '//*[@id="mG61Hd"]/div[2]/div/div[2]/div[1]/div/div/div[2]/div/div[1]/div/div[1]/input',
-    data.reply.name,
-    autoSubmit
-)
+def AutoReply():
 
-roomNum.inputTEXT()
 
-name = AutoInput(
-    '//*[@id="mG61Hd"]/div[2]/div/div[2]/div[2]/div/div/div[2]/div/div[1]/div/div[1]/div',
-    data.reply.txtHint,
-    '//*[@id="mG61Hd"]/div[2]/div/div[2]/div[2]/div/div/div[2]/div/div[1]/div/div[1]/input',
-    data.reply.roomNum,
-    autoSubmit
-)
+    driver.implicitly_wait(10)  # 10 seconds
 
-name.inputTEXT()
+    url_forms = data.reply.url
+    autoSubmit = data.reply.autoSubmit
+    autoClickBTN = data.reply.autoClickBTN
 
-if (autoClickBTN):
-    question1 = AutoInput(
-        '//*[@id="mG61Hd"]/div[2]/div/div[2]/div[3]/div/div/div[2]/div/div/span/div/div[1]/label/div/div[2]/div/span',
-        data.reply.question1,
-        '//*[@id="i13"]/div[3]/div',
-        '',
+    googleFormsURL = url_forms
+
+    driver.get(googleFormsURL)
+
+    time.sleep(0.7)
+
+    roomNum = AutoInput(
+        '//*[@id="mG61Hd"]/div[2]/div/div[2]/div[1]/div/div/div[2]/div/div[1]/div/div[1]/div',
+        data.reply.txtHint,
+        '//*[@id="mG61Hd"]/div[2]/div/div[2]/div[1]/div/div/div[2]/div/div[1]/div/div[1]/input',
+        data.reply.name,
         autoSubmit
     )
 
-    question1.clickRadioBTN()
+    roomNum.inputTEXT()
 
-    question2 = AutoInput(
-        '//*[@id="mG61Hd"]/div[2]/div/div[2]/div[4]/div/div/div[2]/div/div/span/div/div[1]/label/div/div[2]/div/span',
-        data.reply.question2,
-        '//*[@id="i23"]/div[3]/div',
-        '',
+    name = AutoInput(
+        '//*[@id="mG61Hd"]/div[2]/div/div[2]/div[2]/div/div/div[2]/div/div[1]/div/div[1]/div',
+        data.reply.txtHint,
+        '//*[@id="mG61Hd"]/div[2]/div/div[2]/div[2]/div/div/div[2]/div/div[1]/div/div[1]/input',
+        data.reply.roomNum,
         autoSubmit
     )
 
-    question2.clickRadioBTN()
+    name.inputTEXT()
 
-    question3 = AutoInput(
-        '//*[@id="mG61Hd"]/div[2]/div/div[2]/div[5]/div/div/div[2]/div[1]/div/label/div/div[2]/div/span',
-        data.reply.question3,
-        '//*[@id="i34"]/div[2]',
-        '',
-        autoSubmit
-    )
+    if (autoClickBTN):
+        question1 = AutoInput(
+            '//*[@id="mG61Hd"]/div[2]/div/div[2]/div[3]/div/div/div[2]/div/div/span/div/div[1]/label/div/div[2]/div/span',
+            data.reply.question1,
+            '//*[@id="i13"]/div[3]/div',
+            '',
+            autoSubmit
+        )
 
-    question3.clickRadioBTN()
+        question1.clickRadioBTN()
 
-if (autoSubmit):
-    print("3초 후 자동으로 제출됩니다.")
-    time.sleep(3)
-    subbitButton = driver.find_element_by_xpath('//*[@id="mG61Hd"]/div[2]/div/div[3]/div[1]/div/div/span')
-    subbitButton.click()
-    print("제출이 완료되었습니다.")
-    AutoClose()
+        question2 = AutoInput(
+            '//*[@id="mG61Hd"]/div[2]/div/div[2]/div[4]/div/div/div[2]/div/div/span/div/div[1]/label/div/div[2]/div/span',
+            data.reply.question2,
+            '//*[@id="i23"]/div[3]/div',
+            '',
+            autoSubmit
+        )
+
+        question2.clickRadioBTN()
+
+        question3 = AutoInput(
+            '//*[@id="mG61Hd"]/div[2]/div/div[2]/div[5]/div/div/div[2]/div[1]/div/label/div/div[2]/div/span',
+            data.reply.question3,
+            '//*[@id="i34"]/div[2]',
+            '',
+            autoSubmit
+        )
+
+        question3.clickRadioBTN()
+
+    if (autoSubmit):
+        print("3초 후 자동으로 제출됩니다.")
+        time.sleep(3)
+        subbitButton = driver.find_element_by_xpath('//*[@id="mG61Hd"]/div[2]/div/div[3]/div[1]/div/div/span')
+        subbitButton.click()
+        print("제출이 완료되었습니다.")
+        AutoClose(3)
 
 
+    else:
+        print("입력된 내용을 확인 후 직접 제출하세요.")
+
+
+    print("프로그램이 종료되었습니다.")
+
+
+if isReplied:
+    import datetime
+
+    current_time = datetime.datetime.now()
+    print(current_time)
 else:
-    print("입력된 내용을 확인 후 직접 제출하세요.")
-
-
-print("프로그램이 종료되었습니다.")
+    AutoReply()
