@@ -4,7 +4,7 @@ import data.reply
 
 import datetime
 
-current_time = datetime.datetime.now() # 2021-04-29 01:36:06.049279
+current_time = datetime.datetime.now()  # 2021-04-29 01:36:06.049279
 # print('현재 시간:', current_time)
 
 
@@ -17,25 +17,40 @@ with open("./data/replyLog.txt") as f:
         print("최종 제출시간을 찾을 수 없습니다.")
         last_date_str = "2000-01-01 00:00:00.000000"
 
-
-
-
-
-last_date_obj = datetime.datetime.strptime(last_date_str, '%Y-%m-%d %H:%M:%S.%f') # 2021-04-29 01:16:31.358402
+last_date_obj = datetime.datetime.strptime(last_date_str, '%Y-%m-%d %H:%M:%S.%f')  # 2021-04-29 01:16:31.358402
 # print('마지막 입력 시간:', last_date_obj)
 
 current_date = current_time.strftime("%Y-%m-%d")  # 현재 날짜 (2021-04-29)
 last_date = last_date_obj.strftime("%Y-%m-%d")  # 마지막 제출일(2021-04-28)
 
-if current_date == last_date: # 이미 제출함
+if current_date == last_date:  # 이미 제출함
     isReplied = True
 
-else: # 오늘 아직 제출 안함
+else:  # 오늘 아직 제출 안함
     isReplied = False
 
-if not isReplied:
-    driver = webdriver.Chrome(executable_path='./chromedriver_win32/chromedriver')
+if isReplied:
+    goRun = False
 
+    print("오늘은 설문을 이미 제출하였습니다. (최종 제출시각: " + last_date_str + ")")
+
+else:
+
+    while True:
+        print("(최종 제출시각: " + last_date_str + ")")
+
+        input_str = input("아직 설문을 제출하지 않으셨습니다. 지금 설문을 제출할까요? (Y/N) > ")
+
+        if input_str == "Y" or input_str == "y" or input_str == "yes" or input_str == "Yes" or input_str == "YES" or input_str == "ㅛ" or input_str == "네":
+
+            goRun = True
+            driver = webdriver.Chrome(executable_path='./chromedriver_win32/chromedriver')
+
+            break
+        elif input_str == "N" or input_str == "n" or input_str == "no" or input_str == "No" or input_str == "NO" or input_str == "ㅜ" or input_str == "아니오":
+            goRun = False
+
+            break
 
 
 def WriteTime(str):
@@ -45,14 +60,10 @@ def WriteTime(str):
     f.close()
 
 
-
 def AutoClose(t):
     print(str(t) + "초 후 자동으로 종료됩니다.")
     time.sleep(t)
     driver.close()
-
-
-
 
 
 class AutoInput():
@@ -168,9 +179,8 @@ def AutoReply():
     print("프로그램이 종료되었습니다.")
 
 
-if isReplied:
-    print("오늘은 설문을 이미 제출하였습니다. (최종 제출시각: "+ last_date_str+")")
-
-else:
+if goRun:
     AutoReply()
     WriteTime(str(current_time))
+else:
+    print("프로그램을 종료합니다.")
