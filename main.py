@@ -2,17 +2,57 @@ from selenium import webdriver
 import time
 import data.reply
 
-isReplied = True
+import datetime
+
+current_time = datetime.datetime.now() # 2021-04-29 01:36:06.049279
+# print('현재 시간:', current_time)
+
+
+with open("./data/replyLog.txt") as f:
+    try:
+        last_date_str = f.readlines()[-1]  # 가장 마지막 시간 읽기
+        last_date_str = last_date_str.rstrip()  # \n 지우기
+
+    except IndexError:
+        print("최종 제출시간을 찾을 수 없습니다.")
+        last_date_str = "2000-01-01 00:00:00.000000"
+
+
+
+
+
+last_date_obj = datetime.datetime.strptime(last_date_str, '%Y-%m-%d %H:%M:%S.%f') # 2021-04-29 01:16:31.358402
+# print('마지막 입력 시간:', last_date_obj)
+
+current_date = current_time.strftime("%Y-%m-%d")  # 현재 날짜 (2021-04-29)
+last_date = last_date_obj.strftime("%Y-%m-%d")  # 마지막 제출일(2021-04-28)
+
+if current_date == last_date: # 이미 제출함
+    isReplied = True
+
+else: # 오늘 아직 제출 안함
+    isReplied = False
 
 if not isReplied:
     driver = webdriver.Chrome(executable_path='./chromedriver_win32/chromedriver')
 
 
 
+def WriteTime(str):
+    f = open("./data/replyLog.txt", 'a')
+    f.write(str)
+    f.write("\n")
+    f.close()
+
+
+
 def AutoClose(t):
-    print(str(t)+"초 후 자동으로 종료됩니다.")
+    print(str(t) + "초 후 자동으로 종료됩니다.")
     time.sleep(t)
     driver.close()
+
+
+
 
 
 class AutoInput():
@@ -50,8 +90,6 @@ class AutoInput():
 
 
 def AutoReply():
-
-
     driver.implicitly_wait(10)  # 10 seconds
 
     url_forms = data.reply.url
@@ -127,14 +165,12 @@ def AutoReply():
     else:
         print("입력된 내용을 확인 후 직접 제출하세요.")
 
-
     print("프로그램이 종료되었습니다.")
 
 
 if isReplied:
-    import datetime
+    print("오늘은 설문을 이미 제출하였습니다. (최종 제출시각: "+ last_date_str+")")
 
-    current_time = datetime.datetime.now()
-    print(current_time)
 else:
     AutoReply()
+    WriteTime(str(current_time))
