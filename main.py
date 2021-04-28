@@ -19,6 +19,11 @@ driver.get(googleFormsURL)
 
 time.sleep(0.7)
 
+def AutoClose():
+    print("3초 후 자동으로 종료됩니다.")
+    time.sleep(3)
+    driver.close()
+
 
 class AutoInput():
     def __init__(self, txt_Xpath, txt_target, input_Xpath, input_txt, autoSubmit):
@@ -111,7 +116,11 @@ if (autoSubmit):
     subbitButton = driver.find_element_by_xpath('//*[@id="mG61Hd"]/div[2]/div/div[3]/div[1]/div/div/span')
     subbitButton.click()
     print("제출이 완료되었습니다.")
+    AutoClose()
 
 
 else:
     print("입력된 내용을 확인 후 직접 제출하세요.")
+
+
+print("프로그램이 종료되었습니다.")
