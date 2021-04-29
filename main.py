@@ -8,6 +8,8 @@ current_time = datetime.datetime.now()  # 2021-04-29 01:36:06.049279
 # print('현재 시간:', current_time)
 
 
+autoSubmit = data.reply.autoSubmit  # 자동 제출 여부
+
 with open("./data/replyLog.txt") as f:
     try:
         last_date_str = f.readlines()[-1]  # 가장 마지막 시간 읽기
@@ -31,6 +33,7 @@ else:  # 오늘 아직 제출 안함
 
 if isReplied:
     goRun = False
+    goWrite = False
 
     print("오늘은 설문을 이미 제출하였습니다. (최종 제출시각: " + last_date_str + ")")
 
@@ -44,11 +47,23 @@ else:
         if input_str == "Y" or input_str == "y" or input_str == "yes" or input_str == "Yes" or input_str == "YES" or input_str == "ㅛ" or input_str == "네":
 
             goRun = True
+            goWrite = True
+
             driver = webdriver.Chrome(executable_path='./chromedriver_win32/chromedriver')
 
             break
         elif input_str == "N" or input_str == "n" or input_str == "no" or input_str == "No" or input_str == "NO" or input_str == "ㅜ" or input_str == "아니오":
             goRun = False
+            goWrite = False
+
+            break
+
+        elif input_str == "test":
+            goRun = True
+            goWrite = False
+            autoSubmit = False  # 테스트모드에서는 자동제출 허용하지 않음.
+
+            driver = webdriver.Chrome(executable_path='./chromedriver_win32/chromedriver')
 
             break
 
@@ -104,7 +119,6 @@ def AutoReply():
     driver.implicitly_wait(10)  # 10 seconds
 
     url_forms = data.reply.url
-    autoSubmit = data.reply.autoSubmit
     autoClickBTN = data.reply.autoClickBTN
 
     googleFormsURL = url_forms
@@ -176,11 +190,10 @@ def AutoReply():
     else:
         print("입력된 내용을 확인 후 직접 제출하세요.")
 
-    print("프로그램이 종료되었습니다.")
 
 
 if goRun:
     AutoReply()
+if goWrite:
     WriteTime(str(current_time))
-else:
-    print("프로그램을 종료합니다.")
+print("프로그램을 종료합니다.")
