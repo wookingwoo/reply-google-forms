@@ -131,7 +131,7 @@ def AutoReply():
         '//*[@id="mG61Hd"]/div[2]/div/div[2]/div[1]/div/div/div[2]/div/div[1]/div/div[1]/div',
         data.reply.txtHint,
         '//*[@id="mG61Hd"]/div[2]/div/div[2]/div[1]/div/div/div[2]/div/div[1]/div/div[1]/input',
-        data.reply.name,
+        data.reply.roomNum,
         autoSubmit
     )
 
@@ -141,7 +141,7 @@ def AutoReply():
         '//*[@id="mG61Hd"]/div[2]/div/div[2]/div[2]/div/div/div[2]/div/div[1]/div/div[1]/div',
         data.reply.txtHint,
         '//*[@id="mG61Hd"]/div[2]/div/div[2]/div[2]/div/div/div[2]/div/div[1]/div/div[1]/input',
-        data.reply.roomNum,
+        data.reply.name,
         autoSubmit
     )
 
