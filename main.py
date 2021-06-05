@@ -43,28 +43,24 @@ else:
         print("(최종 제출시각: " + last_date_str + ")")
 
         input_str = input("아직 설문을 제출하지 않으셨습니다. 지금 설문을 제출할까요? (Y/N) > ")
+        input_str = input_str.lower().strip()
 
-        if input_str == "Y" or input_str == "y" or input_str == "yes" or input_str == "Yes" or input_str == "YES" or input_str == "ㅛ" or input_str == "네":
-
+        if input_str == "y" or input_str == "yes" or input_str == "ㅛ" or input_str == "네":
             goRun = True
             goWrite = True
-
             driver = webdriver.Chrome(executable_path='./chromedriver_win32/chromedriver')
-
             break
-        elif input_str == "N" or input_str == "n" or input_str == "no" or input_str == "No" or input_str == "NO" or input_str == "ㅜ" or input_str == "아니오":
+
+        elif input_str == "n" or input_str == "no" or input_str == "ㅜ" or input_str == "아니오":
             goRun = False
             goWrite = False
-
             break
 
         elif input_str == "test":
             goRun = True
             goWrite = False
             autoSubmit = False  # 테스트모드에서는 자동제출 허용하지 않음.
-
             driver = webdriver.Chrome(executable_path='./chromedriver_win32/chromedriver')
-
             break
 
 
@@ -189,7 +185,6 @@ def AutoReply():
 
     else:
         print("입력된 내용을 확인 후 직접 제출하세요.")
-
 
 
 if goRun:
