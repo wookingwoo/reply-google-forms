@@ -1,1 +1,4 @@
+requests~=2.26.0
+
 selenium~=3.141.0
+firebase-admin~=5.0.2

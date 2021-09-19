@@ -1,5 +1,6 @@
 import time
 import datetime
+import requests
 
 from selenium import webdriver
 import firebase_admin
@@ -7,6 +8,7 @@ from firebase_admin import credentials
 from firebase_admin import db
 
 import data.reply
+import data.slack_key
 
 # Firebase database 인증 및 앱 초기화
 cred = credentials.Certificate("data/firebase_key.json")
@@ -74,6 +76,19 @@ else:
             autoSubmit = False  # 테스트모드에서는 자동제출 허용하지 않음.
             driver = webdriver.Chrome(executable_path='./chromedriver_win32/chromedriver')
             break
+
+
+def slack_message(text):
+    token = data.slack_key.slack_token
+    channel = data.slack_key.slack_channel
+
+    slack_msg = "제출 완료: " + text
+
+    print(slack_msg)  # 콘솔 출력
+    requests.post("https://slack.com/api/chat.postMessage",
+                  headers={"Authorization": "Bearer " + token},
+                  data={"channel": channel, "text": slack_msg}
+                  )  # 슬랙 메시지 전송
 
 
 def AutoClose(t):
@@ -199,5 +214,7 @@ if goWrite:
 
     dir_all_logs_year = db.reference('submit_date/all_submit_logs/{}'.format(now_year))
     dir_all_logs_year.push(str_current_time)
+
+    slack_message(str_current_time)
 
 print("프로그램을 종료합니다.")
