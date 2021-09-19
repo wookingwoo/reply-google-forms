@@ -16,7 +16,7 @@ firebase_admin.initialize_app(cred, {
 
 dir_submit_date = db.reference('submit_date')  # 기본 위치 지정
 dir_recent = db.reference('submit_date/recent_submit')
-dir_all_logs = db.reference('submit_date/all_submit_logs')
+# dir_all_logs = db.reference('submit_date/all_submit_logs')
 
 current_time = datetime.datetime.now()  # 2021-04-29 01:36:06.049279
 str_current_time = str(current_time)
@@ -34,6 +34,7 @@ if last_date_str == "" or last_date_str is None:
 last_date_obj = datetime.datetime.strptime(last_date_str, '%Y-%m-%d %H:%M:%S.%f')  # 2021-04-29 01:16:31.358402
 
 current_date = current_time.strftime("%Y-%m-%d")  # 현재 날짜 (2021-04-29)
+now_year = current_time.strftime("%Y")  # 현재 년도 (2021)
 last_date = last_date_obj.strftime("%Y-%m-%d")  # 마지막 제출일(2021-04-28)
 
 if current_date == last_date:  # 이미 제출함
@@ -195,6 +196,8 @@ if goRun:
     AutoReply()
 if goWrite:
     dir_submit_date.update({'recent_submit': str_current_time})
-    dir_all_logs.push(str_current_time)
+
+    dir_all_logs_year = db.reference('submit_date/all_submit_logs/{}'.format(now_year))
+    dir_all_logs_year.push(str_current_time)
 
 print("프로그램을 종료합니다.")
