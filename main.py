@@ -1,26 +1,37 @@
-from selenium import webdriver
 import time
-import data.reply
-
 import datetime
 
+from selenium import webdriver
+import firebase_admin
+from firebase_admin import credentials
+from firebase_admin import db
+
+import data.reply
+
+# Firebase database 인증 및 앱 초기화
+cred = credentials.Certificate("data/firebase_key.json")
+firebase_admin.initialize_app(cred, {
+    'databaseURL': 'https://ndhs-covid19-survey-default-rtdb.firebaseio.com/'
+})
+
+dir = db.reference()  # 기본 위치 지정
+dir_recent = db.reference('recent_submit')
+dir_all_logs = db.reference('all_submit_logs')
+
 current_time = datetime.datetime.now()  # 2021-04-29 01:36:06.049279
+str_current_time = str(current_time)
 # print('현재 시간:', current_time)
 
 
 autoSubmit = data.reply.autoSubmit  # 자동 제출 여부
 
-with open("./data/replyLog.txt") as f:
-    try:
-        last_date_str = f.readlines()[-1]  # 가장 마지막 시간 읽기
-        last_date_str = last_date_str.rstrip()  # \n 지우기
+last_date_str = dir_recent.get()
 
-    except IndexError:
-        print("최종 제출시간을 찾을 수 없습니다.")
-        last_date_str = "2000-01-01 00:00:00.000000"
+if last_date_str == "" or last_date_str is None:
+    print("최종 제출시간을 찾을 수 없습니다.")
+    last_date_str = "2000-01-01 00:00:00.000000"
 
 last_date_obj = datetime.datetime.strptime(last_date_str, '%Y-%m-%d %H:%M:%S.%f')  # 2021-04-29 01:16:31.358402
-# print('마지막 입력 시간:', last_date_obj)
 
 current_date = current_time.strftime("%Y-%m-%d")  # 현재 날짜 (2021-04-29)
 last_date = last_date_obj.strftime("%Y-%m-%d")  # 마지막 제출일(2021-04-28)
@@ -62,13 +73,6 @@ else:
             autoSubmit = False  # 테스트모드에서는 자동제출 허용하지 않음.
             driver = webdriver.Chrome(executable_path='./chromedriver_win32/chromedriver')
             break
-
-
-def WriteTime(str):
-    f = open("./data/replyLog.txt", 'a')
-    f.write(str)
-    f.write("\n")
-    f.close()
 
 
 def AutoClose(t):
@@ -121,7 +125,7 @@ def AutoReply():
 
     driver.get(googleFormsURL)
 
-    time.sleep(0.7)
+    time.sleep(0.5)
 
     roomNum = AutoInput(
         '//*[@id="mG61Hd"]/div[2]/div/div[2]/div[1]/div/div/div[2]/div/div[1]/div/div[1]/div',
@@ -190,5 +194,7 @@ def AutoReply():
 if goRun:
     AutoReply()
 if goWrite:
-    WriteTime(str(current_time))
+    dir.update({'recent_submit': str_current_time})
+    dir_all_logs.push(str_current_time)
+
 print("프로그램을 종료합니다.")
