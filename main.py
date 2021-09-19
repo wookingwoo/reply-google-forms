@@ -14,9 +14,9 @@ firebase_admin.initialize_app(cred, {
     'databaseURL': 'https://ndhs-covid19-survey-default-rtdb.firebaseio.com/'
 })
 
-dir = db.reference()  # 기본 위치 지정
-dir_recent = db.reference('recent_submit')
-dir_all_logs = db.reference('all_submit_logs')
+dir_submit_date = db.reference('submit_date')  # 기본 위치 지정
+dir_recent = db.reference('submit_date/recent_submit')
+dir_all_logs = db.reference('submit_date/all_submit_logs')
 
 current_time = datetime.datetime.now()  # 2021-04-29 01:36:06.049279
 str_current_time = str(current_time)
@@ -194,7 +194,7 @@ def AutoReply():
 if goRun:
     AutoReply()
 if goWrite:
-    dir.update({'recent_submit': str_current_time})
+    dir_submit_date.update({'recent_submit': str_current_time})
     dir_all_logs.push(str_current_time)
 
 print("프로그램을 종료합니다.")
